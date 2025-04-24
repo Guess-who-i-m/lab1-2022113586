@@ -6,6 +6,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.util.List;
 
+// 随便的修改，测试intellij idea与github的连接
 public class GraphGUI extends JFrame {
 
     private static Map<String, Map<String, Integer>> graph; // 邻接表表示的有向带权图
