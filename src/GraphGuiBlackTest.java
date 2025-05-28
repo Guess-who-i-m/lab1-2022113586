@@ -3,7 +3,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
-public class GraphGuiTest {
+public class GraphGuiBlackTest {
 
   private GraphGui graphGui;
   private String testText = "The scientist carefully analyzed the data, wrote a detailed report, and shared the report with the team, but the team requested more data, so the scientist analyzed it again";

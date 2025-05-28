@@ -567,23 +567,45 @@ public class GraphGui extends JFrame {
    * @return bridgeWords 形如桥接词1, 桥接词2, ... 的桥接词列表
    */
   public String showBridgeWords(String word1, String word2) {
-    word1 = word1.toLowerCase();
+    word1 = word1.toLowerCase();  // 将单词转换为小写以统一比较
     word2 = word2.toLowerCase();
 
-    if (!graph.containsKey(word1) || !graph.containsKey(word2)) {
-      if (!graph.containsKey(word1)) {
-        return "err1";
-      } else {
-        return "err2";
-      }
+    // 创建一个包含所有唯一单词的集合，用于快速存在性检查
+    // this.words 包含文件中的所有单词（可能有重复）
+    // 使用HashSet可高效判断单词是否存在
+    Set<String> allUniqueWordsInText = new HashSet<>(this.words);
+
+    // 检查1：确认word1存在于文本中
+    if (!allUniqueWordsInText.contains(word1)) {
+      return "err1";  // "未找到词1 \"" + word1 + "\" 在图中！"
     }
 
-    Set<String> bridgeWords = new HashSet<>();
-    Map<String, Integer> neighbors1 = graph.get(word1);
+    // 检查2：确认word2存在于文本中
+    if (!allUniqueWordsInText.contains(word2)) {
+      return "err2";  // "未找到词2 \"" + word2 + "\" 在图中！"
+    }
 
-    for (String neighbor : neighbors1.keySet()) {
-      if (graph.containsKey(neighbor) && graph.get(neighbor).containsKey(word2)) {
-        bridgeWords.add(neighbor);
+    // 检查3：确认word1有出边（即存在后续连接词）
+    // 若word1在图中但没有出边，则无法形成路径
+    if (!graph.containsKey(word1)) {
+      return "err3";  // "未找到从 \"" + word1 + "\" 到 \"" + word2 + "\" 的桥梁词！"
+    }
+
+    // 收集候选桥梁词
+    Set<String> bridgeWords = new HashSet<>();
+    // 获取word1的直接后续词（可能的桥梁词）
+    Map<String, Integer> neighborsOfWord1 = graph.get(word1);
+
+    // 遍历每个候选桥梁词
+    for (String potentialBridge : neighborsOfWord1.keySet()) {
+      // 检查候选词是否指向word2：
+      // 1. 候选词必须存在于图中（即有出边）
+      // 2. 其出边必须包含word2
+      if (graph.containsKey(potentialBridge)) {
+        Map<String, Integer> nextLevel = graph.get(potentialBridge);
+        if (nextLevel.containsKey(word2)) {
+          bridgeWords.add(potentialBridge);  // 确认符合条件的桥梁词
+        }
       }
     }
 
